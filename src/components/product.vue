@@ -85,7 +85,7 @@ export default {
         const token = localStorage.getItem('starcokeConfig')
         this.config = this.$jwt.decode(token).config
       } catch(e) {
-        alert(`failed to decode token ${e}`)
+        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
         localStorage.removeItem('starcokeConfig')
         this.$router.push({
           name: 'login'
@@ -176,7 +176,7 @@ export default {
     },
     valid_check(productId){
       if(this.products[productId].disabled) {
-        alert('이미 구매하셨습니다.')
+        this.$swal('Info', '이미 구매하셨습니다.', 'info')
         return
       }
       this.axios.get(`https://api.luniverse.io/tx/v1.0/wallets/${this.walletAddress.user}/${this.mtSymbol}/${this.stSymbol}/balance`, {
@@ -189,11 +189,11 @@ export default {
             this.purchase(productId);
           }
           else{
-            alert('보유하신 RWT를 확인해주세요!')
+            this.$swal('Fail', '보유하신 RWT를 확인해주세요!', 'error')
           }
         })
         .catch(() => {
-          alert('잔고 확인 실패')
+          this.$swal('Fail', '잔고 확인 실패', 'error')
         })
     },
     purchase(productId){
@@ -223,7 +223,7 @@ export default {
             },
           })
             .then(() => {
-              alert('구매에 성공하였습니다.')
+              this.$swal('Success', '구매에 성공하였습니다.', 'success')
               this.products[productId].buy='구매 완료';
               this.products[productId].disabled='true';
               this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.getOwner}`,{
@@ -243,15 +243,15 @@ export default {
                   }
                 })
                 .catch(() => {
-                  alert('구매 내역 불러오기에 실패했습니다. getOwner 함수를 확인해주세요.')
+                  this.$swal('Fail', '구매 내역 불러오기에 실패했습니다. getOwner 함수를 확인해주세요.', 'error')
                 })
             })
             .catch(() => {
-              alert('구매 확정에 실패했습니다. 구매 확정을 위해, setOwner 함수를 확인해주세요.')
+              this.$swal('Fail', '구매 확정에 실패했습니다. setOwner 함수를 확인해주세요.', 'error')
             });
         })
         .catch(() => {
-          alert('구매에 실패하였습니다. purchase 함수를 확인해주세요.')
+          this.$swal('Fail', '구매에 실패하였습니다. purchase 함수를 확인해주세요.', 'error')
         });
       
     }

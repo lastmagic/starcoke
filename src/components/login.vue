@@ -41,7 +41,7 @@ export default {
         const token = JSON.parse(localStorage.getItem('starcokeConfig'));
         this.config = this.$jwt.decode(token).config
       } catch(e) {
-        alert(`failed to decode token ${e}`)
+        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
         localStorage.removeItem('starcokeConfig')
         this.$router.push({
           name: 'login'

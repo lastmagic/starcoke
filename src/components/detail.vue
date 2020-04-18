@@ -77,7 +77,7 @@ export default {
         const token = localStorage.getItem('starcokeConfig')
         this.config = this.$jwt.decode(token).config
       } catch(e) {
-        alert(`failed to decode token ${e}`)
+        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
         localStorage.removeItem('starcokeConfig')
         this.$router.push({
           name: 'login'
@@ -233,13 +233,13 @@ export default {
       }
       )
         .then(() => {
-          alert('좋아요를 눌러주셔서 감사합니다!\n100RWT를 드려요!');
+          this.$swal('Success', '좋아요를 눌러주셔서 감사합니다!\n100RWT를 드려요!', 'success')
           n = n + 1;
           n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           this.database.like=n;
         })
         .catch(() => {
-          alert('좋아요에 실패했습니다!')
+          this.$swal('Error', '좋아요에 실패했습니다!', 'error')
         });
     },
     fund(){
@@ -258,7 +258,7 @@ export default {
           },
         })
         .then(() => {
-          alert(`10,000원이 펀딩되었습니다.\n1,000RWT를 드려요!`)
+          this.$swal('Success', '10,000원이 펀딩되었습니다.\n1,000RWT를 드려요!', 'success')
           m = m + 10000;
           m = m.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           this.database.money=m;
@@ -267,10 +267,9 @@ export default {
           this.database.people=p;
         })
         .catch(() => {
-          alert('Fund에 실패했습니다!')
+          this.$swal('Fail', 'Fund에 실패했습니다!', 'error')
         });
-      
-    }
+    },
   }
 }
 </script>
