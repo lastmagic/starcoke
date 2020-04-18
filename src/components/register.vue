@@ -1,6 +1,7 @@
 <template>
   <div>
     <Header/>
+    <form @submit.prevent="register">
       <div class="login-wrap">
         <h1 class="login-title">Register</h1>
         <div>
@@ -16,16 +17,16 @@
           <input type="password" v-model="password" id="password" name="password" placeholder="Enter password" class="login-input" required>
         </div>
         <div class="login-button-area">
-          <button type="submit" class="login-button t_primary bc-primary t_white" @click="register" style="flex-basis:100%; margin-right:0;">회원가입</button>
+          <button type="submit" class="login-button t_primary bc-primary t_white" style="flex-basis:100%; margin-right:0;">회원가입</button>
         </div>
         {{apiResponse}}
       </div>
+    </form>
   </div>
 </template>
 
 <script>
 import Header from '@/components/header'
-// import axios from 'axios'
 
 export default {
   components: {
