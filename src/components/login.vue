@@ -1,16 +1,16 @@
 <template>
   <div>
     <Header/>
-    <form action="/login" method="POST">
+    <form @submit.prevent="login">
       <div class="login-wrap">
         <h1 class="login-title">Login</h1>
         <div>
           <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Enter Email Address" class="login-input" required>
+          <input type="email" v-model="email" id="email" name="email" placeholder="Enter Email Address" class="login-input" required>
         </div>
         <div>
           <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter password" class="login-input" required>
+          <input type="password" v-model="password" id="password" name="password" placeholder="Enter password" class="login-input" required>
         </div>
         <div class="login-button-area">
           <button type="submit" class="login-button bc-primary t_white">로그인</button>
@@ -30,7 +30,23 @@ export default {
   },
   data () {
     return {
-
+      email: null,
+      password: null,
+      config: {},
+    }
+  },
+  mounted() {
+    if (localStorage.getItem('starcokeConfig')) {
+      try {
+        const token = JSON.parse(localStorage.getItem('starcokeConfig'));
+        this.config = this.$jwt.decode(token).config
+      } catch(e) {
+        alert(`failed to decode token ${e}`)
+        localStorage.removeItem('starcokeConfig')
+        this.$router.push({
+          name: 'login'
+        })
+      }
     }
   },
   methods: {
@@ -44,7 +60,8 @@ export default {
         },
         // headers: {'DINO-REQUEST-HEAD': 'XMLHttpRequest'},
       }).then(response => {
-        this.apiResponse = response
+        const token = response.data.data.jwtToken;
+        localStorage.setItem('starcokeConfig', token);
         this.$router.push({
           name: 'home'
         })

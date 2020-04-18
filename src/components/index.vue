@@ -34,7 +34,7 @@
             <img src="@/assets/img2/idol/him2.png" class="photo5" alt>
             <div class="progress-wrap">
               <div style="display: flow-root">
-                <span class="pl-2 t_white f15 font-weight-700 left">목표금액 256,256,000원</span>
+                <span class="pl-2 t_white f15 font-weight-700 left">목표금액 255,250,000원</span>
                 <span class="pr-2 t_white f15 font-weight-700 right">255% 달성</span>
               </div>
               <div class="progress progress-striped">
@@ -74,7 +74,7 @@
             <img src="@/assets/img2/idol/nana1.png" class="photo5" alt>
             <div class="progress-wrap">
               <div style="display: flow-root">
-                <span class="pl-2 t_white f15 font-weight-700 left">목표금액 777,777,000원</span>
+                <span class="pl-2 t_white f15 font-weight-700 left">목표금액 70,000,000원</span>
                 <span class="pr-2 t_white f15 font-weight-700 right">59% 달성</span>
               </div>
               <div class="progress progress-striped">
@@ -141,6 +141,25 @@ import Header from '@/components/header'
 export default {
   components: {
     Header,
+  },
+  data() {
+    return {
+      config: undefined,
+    }
+  },
+  mounted() {
+    if (localStorage.getItem('starcokeConfig')) {
+      try {
+        const token = localStorage.getItem('starcokeConfig')
+        this.config = this.$jwt.decode(token).config
+      } catch(e) {
+        alert(`failed to decode token ${e}`)
+        localStorage.removeItem('starcokeConfig')
+        this.$router.push({
+          name: 'login'
+        })
+      }
+    }
   },
 }
 </script>

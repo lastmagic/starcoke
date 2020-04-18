@@ -47,38 +47,52 @@
 
 <script>
 import Header from '@/components/header'
-import {Config} from '../js/config'
 import BigNumber from 'bignumber.js'
 
 export default {
   components: {
     Header,
   },
+  mounted() {
+    if (localStorage.getItem('starcokeConfig')) {
+      try {
+        const token = localStorage.getItem('starcokeConfig')
+        this.config = this.$jwt.decode(token).config
+      } catch(e) {
+        alert(`failed to decode token ${e}`)
+        localStorage.removeItem('starcokeConfig')
+        this.$router.push({
+          name: 'login'
+        })
+      }
+    }
+    this.load()
+  },
   data() {
     return {
+      config: undefined,
       balance: 0,
       isLoading: false,
-      username: Config.userName ? Config.userName + ' 님의 지갑' : '지갑',
       History: [
       ]
     }
   },
   computed: {
     walletAddress() {
-      return Config.walletAddress
+      return (this.config || {}).walletAddress
     },
     mtSymbol() {
-      return Config.mt.symbol
+      return ((this.config || {}).mt || {}).symbol
     },
     stSymbol() {
-      return Config.st.symbol
+      return ((this.config || {}).st || {}).symbol
     },
     apiKey() {
-      return Config.dapp.apiKey
-    }
-  },
-  mounted() {
-    this.load()
+      return ((this.config || {}).dapp || {}).apiKey
+    },
+    username() {
+      return (this.config || {}).userName ? this.config.userName + ' 님의 지갑' : '지갑'
+    },
   },
   methods: {
     load() {
@@ -102,7 +116,7 @@ export default {
         },
       })
         .then((response) => {
-          var temp=response.data.data.histories.items.filter(valid => (valid.txStatus==="SUCCEED" || valid.txStatus==="FAILED") && [Config.txActionName.funding, Config.txActionName.like, Config.txActionName.purchase].indexOf(valid.actionName) !== -1);
+          var temp=response.data.data.histories.items.filter(valid => (valid.txStatus==="SUCCEED" || valid.txStatus==="FAILED") && [this.config.txActionName.funding, this.config.txActionName.like, this.config.txActionName.purchase].indexOf(valid.actionName) !== -1);
           temp.map(tx => this.History.push({time: tx.createdAt.substring(0,10), name: tx.actionName, status: tx.txStatus}));
           this.History.map(history => {
             if(history.status === "SUCCEED"){

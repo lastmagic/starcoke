@@ -10,7 +10,7 @@
         <div class="navbar-nav align-items-lg-center ml-auto">
           <div class="nav-item">
             <router-link class="btn btn-outline-white btn-round" :to="{ name: 'my' }">
-              <i v-if="compUserName" class="fa fa-user" />{{username}}
+              <i v-if="username !== 'My Page'" class="fa fa-user" />{{username}}
             </router-link>
           </div>
         </div>
@@ -20,16 +20,29 @@
 </template>
 
 <script>
-  import {Config} from '../js/config'
   export default{
     data () {
       return {
-        username : Config.userName ? Config.userName + ' 님' : 'My Page'
+        config: undefined,
+      }
+    },
+    mounted() {
+      if (localStorage.getItem('starcokeConfig')) {
+        try {
+          const token = localStorage.getItem('starcokeConfig')
+          this.config = this.$jwt.decode(token).config
+        } catch(e) {
+          alert(`failed to decode token ${e}`)
+          localStorage.removeItem('starcokeConfig')
+          this.$router.push({
+            name: 'login'
+          })
+        }
       }
     },
     computed:{
-      compUserName() {
-        return Config ? Config.userName : false
+      username() {
+        return (this.config || {}).userName ? this.config.userName + ' 님' : 'My Page'
       }
     }
   }

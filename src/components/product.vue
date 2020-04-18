@@ -73,15 +73,30 @@
 
 <script>
 import Header from '@/components/header'
-import {Config} from '../js/config'
 import BigNumber from 'bignumber.js'
 
 export default {
   components: {
     Header,
   },
+  mounted() {
+    if (localStorage.getItem('starcokeConfig')) {
+      try {
+        const token = localStorage.getItem('starcokeConfig')
+        this.config = this.$jwt.decode(token).config
+      } catch(e) {
+        alert(`failed to decode token ${e}`)
+        localStorage.removeItem('starcokeConfig')
+        this.$router.push({
+          name: 'login'
+        })
+      }
+    }
+    this.load()
+  },
   data () {
     return {
+      config: {},
       products: [
         {
           buy: '구매하기',
@@ -116,26 +131,23 @@ export default {
   },
   computed: {
     walletAddress() {
-      return Config.walletAddress
+      return this.config.walletAddress
     },
     mtSymbol() {
-      return Config.mt.symbol
+      return this.config.mt.symbol
     },
     stSymbol() {
-      return Config.st.symbol
+      return this.config.st.symbol
     },
     apiKey() {
-      return Config.dapp.apiKey
+      return this.config.dapp.apiKey
     },
     txActionName() {
-      return Config.txActionName
+      return this.config.txActionName
     },
     userName() {
-      return Config.userName
+      return this.config.userName
     }
-  },
-  mounted(){
-    this.load()
   },
   methods: {
     load() { 
