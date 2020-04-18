@@ -6,6 +6,7 @@ import VueAxios from 'vue-axios'
 import BigNumber from 'bignumber.js'
 import VueJWT from 'vuejs-jwt'
 import VueSweetalert2 from 'vue-sweetalert2';
+import VueMoment from 'vue-moment';
 
 import './assets/css/luniverstar.css'
 import './assets/vendor/css/bootstrap.css'
@@ -21,6 +22,8 @@ const options = {
 };
 
 Vue.use(VueSweetalert2, options);
+Vue.use(VueMoment);
+
 
 Vue.config.productionTip = false
 

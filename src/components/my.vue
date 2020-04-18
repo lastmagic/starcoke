@@ -16,6 +16,7 @@
       <div class="row justify-content-between">
         <div class="mb-3" style="margin-top: 6rem;">
           <h3>History</h3>
+          <button @click="clearHistory"><span>Clear History</span></button>
         </div>
         <table class="tbl">
             <colgroup>
@@ -66,6 +67,16 @@ export default {
         })
       }
     }
+
+    if (localStorage.getItem('historyFilter')) {
+      try {
+        const historyFilterStr = localStorage.getItem('historyFilter')
+        this.historyFilter = this.$moment.utc(new Date(historyFilterStr))
+      } catch(e) {
+        this.$swal('Filter Error', 'Filter를 찾을 수 없습니다.', 'error')
+        localStorage.removeItem('historyFilter')
+      }
+    }
     this.load()
   },
   data() {
@@ -73,6 +84,7 @@ export default {
       config: undefined,
       balance: 0,
       isLoading: false,
+      historyFilter: undefined,
       History: [
       ]
     }
@@ -116,7 +128,16 @@ export default {
         },
       })
         .then((response) => {
-          var temp=response.data.data.histories.items.filter(valid => (valid.txStatus==="SUCCEED" || valid.txStatus==="FAILED") && [this.config.txActionName.funding, this.config.txActionName.like, this.config.txActionName.purchase].indexOf(valid.actionName) !== -1);
+          var temp=response.data.data.histories.items.filter(valid => {
+            let res = (valid.txStatus==="SUCCEED" || valid.txStatus==="FAILED") && [this.config.txActionName.funding, this.config.txActionName.like, this.config.txActionName.purchase].indexOf(valid.actionName) !== -1
+
+            if (this.historyFilter && typeof this.historyFilter === 'object') {
+              const createdAt = this.$moment.utc(valid.createdAt)
+              res = res && createdAt.isAfter(this.historyFilter)
+            }
+            
+            return res;
+          });
           temp.map(tx => this.History.push({time: tx.createdAt.substring(0,10), name: tx.actionName, status: tx.txStatus}));
           this.History.map(history => {
             if(history.status === "SUCCEED"){
@@ -129,6 +150,11 @@ export default {
         })
         .catch(() => {
         })
+    },
+    clearHistory() {
+      const now = this.$moment.utc(new Date())
+      localStorage.setItem('historyFilter', now);
+      this.$swal('Success', '내역 삭제가 완료되었습니다.', 'success')
     },
   }
 }
