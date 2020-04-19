@@ -173,6 +173,7 @@ export default {
   },
   methods: {
     load() {
+      if (!this.isLoggedIn) return;
       this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`,{
         headers: {
           'Content-Type': `application/json`
@@ -213,6 +214,10 @@ export default {
         })
     },
     like(){
+      if (!this.isLoggedIn) {
+        this.checkLoginAndRouteIfNeeded();
+        return;
+      }
       let n = parseInt(this.database.like.replace(/,/g,""));
       this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.like}`,{ 
           'from': this.walletAddress.pd,
@@ -238,6 +243,10 @@ export default {
         });
     },
     fund(){
+      if (!this.isLoggedIn) {
+        this.checkLoginAndRouteIfNeeded();
+        return;
+      }
       let m = parseInt(this.database.money.replace(/,/g,""));
       let p = parseInt(this.database.people.replace(/,/g,""));
       this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.funding}`,{

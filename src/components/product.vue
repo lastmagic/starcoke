@@ -136,7 +136,8 @@ export default {
     }
   },
   methods: {
-    load() { 
+    load() {
+      if (!this.isLoggedIn) return;
       for(let productId = 0; productId < 4; productId++){
         this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.getOwner}`,{
           'from': this.walletAddress.user,
@@ -161,6 +162,10 @@ export default {
       }
     },
     valid_check(productId){
+      if (!this.isLoggedIn) {
+        this.checkLoginAndRouteIfNeeded();
+        return
+      }
       if(this.products[productId].disabled) {
         this.$swal('Info', '이미 구매하셨습니다.', 'info')
         return

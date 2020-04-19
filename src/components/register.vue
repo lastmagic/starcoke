@@ -19,7 +19,6 @@
         <div class="login-button-area">
           <button type="submit" class="login-button t_primary bc-primary t_white" style="flex-basis:100%; margin-right:0;">회원가입</button>
         </div>
-        {{apiResponse}}
       </div>
     </form>
   </div>
@@ -52,10 +51,13 @@ export default {
         },
         headers: {'DINO-REQUEST-HEAD': 'XMLHttpRequest'},
       }).then(response => {
-        this.apiResponse = response
-        this.$router.push({
-          name: 'login'
-        })
+        if (response && response.status === 200) {
+          this.$router.push({
+            name: 'login'
+          })
+        }
+      }).catch(() => {
+        this.$swal('Error', '이미 가입된 이메일이 존재합니다.', 'error')
       })
     }
   }

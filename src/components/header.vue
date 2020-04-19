@@ -9,10 +9,13 @@
         </div>
         <div class="navbar-nav align-items-lg-center ml-auto">
           <div class="nav-item">
-            <router-link v-if="isLogIned" class="btn btn-outline-white btn-round" :to="{ name: 'my' }">
-              <i v-if="username !== 'My Page'" class="fa fa-user" />{{username}}
-            </router-link>
-            <a v-if="$route.name !== 'login'" href="javascript:void(0);" @click="logout">Logout</a>
+            <router-link v-if="!isLoggedIn" :to="{ name: 'login' }">LogIn</router-link>
+            <template v-else>
+              <router-link class="btn btn-outline-white btn-round" :to="{ name: 'my' }">
+                <i v-if="username !== 'My Page'" class="fa fa-user" />{{username}}
+              </router-link>
+              <a v-if="$route.name !== 'login' && isLoggedIn" href="javascript:void(0);" @click="logout">Logout</a>
+            </template>
           </div>
         </div>
       </div>

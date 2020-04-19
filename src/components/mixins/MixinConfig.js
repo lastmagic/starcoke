@@ -16,11 +16,6 @@ export default {
           name: 'login'
         })
       }
-    } else {
-      this.$swal('로그인 필요', '로그인 화면으로 이동합니다.', 'info')
-      this.$router.push({
-        name: 'login'
-      })
     }
 
     if (this.load && typeof this.load === 'function') {
@@ -28,7 +23,7 @@ export default {
     }
   },
   computed: {
-    isLogIned() {
+    isLoggedIn() {
       if (localStorage.getItem('starcokeConfig') && this.config && typeof this.config === 'object') {
         return true
       }
@@ -44,5 +39,13 @@ export default {
         name: 'login'
       })
     },
+    checkLoginAndRouteIfNeeded() {
+      if (!this.isLoggedIn) {
+        this.$swal('로그인 필요', '해당 동작은 로그인이 필요합니다.\n 로그인 화면으로 이동합니다.', 'info');
+        this.$router.push({
+          name: 'login'
+        })
+      }
+    }
   },
 }
