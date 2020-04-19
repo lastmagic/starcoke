@@ -16,6 +16,11 @@ export default {
           name: 'login'
         })
       }
+    } else {
+      this.$swal('로그인 필요', '로그인 화면으로 이동합니다.', 'info')
+      this.$router.push({
+        name: 'login'
+      })
     }
 
     if (this.load && typeof this.load === 'function') {
