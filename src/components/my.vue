@@ -16,28 +16,35 @@
       <div class="row justify-content-between">
         <div class="mb-3" style="margin-top: 6rem;">
           <h3>History</h3>
-          <button @click="clearHistory"><span>Clear History</span></button>
+          
+          <p>
+            <a v-if="walletAddress && walletAddress.user" :href="`https://sidescan.luniverse.io/chains/5300575914426995782/accounts/${walletAddress.user}`" target="_blank">Scan에서 확인하기</a>
+          </p>
+          
+          <button @click="applyHistoryFilter"><span>Apply Filter</span></button>
+          <button @click="removeHistoryFilter"><span>Remove Filter</span></button>
         </div>
         <table class="tbl">
             <colgroup>
-            <col style="width:20%">
-            <col style="width:40%">
+            <col style="width:30%">
             <col style="width:10%">
+            <col style="width:10%">
+            <col style="width:20%">
           </colgroup>
           <thead>
             <tr>
               <th scope="col">일시</th>
-              <th scope="col">항목</th>
-              <th scope="col">실행결과</th>
+              <th scope="col">송신자</th>
+              <th scope="col">수신자</th>
+              <th scope="col">금액</th>
             </tr>
           </thead>
           <tbody>
             <tr v-bind:key="`${i}`" v-for="(history, i) in History">
-              <td scope="row">{{history.time}}</td>
-              <td><time datetime="">{{history.name.toUpperCase()}}</time></td>
-              <td>
-                <time datetime="" v-bind:style="{color: history.color}">{{history.status}}</time>
-              </td>
+              <td scope="row"><time datetime="">{{history.time}}</time></td>
+              <td scope="row">{{history.from}}</td>
+              <td scope="row">{{history.to}}</td>
+              <td scope="row" v-bind:style="{color: history.from === 'pd' ? '#00B580' : '#F14E4E'}">{{convertReadableNum(history.value)}}</td>
             </tr>
           </tbody>
         </table>
@@ -49,25 +56,14 @@
 <script>
 import Header from '@/components/header'
 import BigNumber from 'bignumber.js'
+import MixinConfig from '@/components/mixins/MixinConfig'
 
 export default {
+  mixins: [MixinConfig],
   components: {
     Header,
   },
   mounted() {
-    if (localStorage.getItem('starcokeConfig')) {
-      try {
-        const token = localStorage.getItem('starcokeConfig')
-        this.config = this.$jwt.decode(token).config
-      } catch(e) {
-        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
-        localStorage.removeItem('starcokeConfig')
-        this.$router.push({
-          name: 'login'
-        })
-      }
-    }
-
     if (localStorage.getItem('historyFilter')) {
       try {
         const historyFilterStr = localStorage.getItem('historyFilter')
@@ -81,7 +77,6 @@ export default {
   },
   data() {
     return {
-      config: undefined,
       balance: 0,
       isLoading: false,
       historyFilter: undefined,
@@ -121,41 +116,51 @@ export default {
           this.balance = 0;
         });
       
-      this.axios.get(`https://api.luniverse.io/tx/v1.0/histories?next=0`,{
+      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`,{
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': `application/json`
         },
       })
         .then((response) => {
-          var temp=response.data.data.histories.items.filter(valid => {
-            let res = (valid.txStatus==="SUCCEED" || valid.txStatus==="FAILED") && [this.config.txActionName.funding, this.config.txActionName.like, this.config.txActionName.purchase].indexOf(valid.actionName) !== -1
-
+          const transferEvents = response.data.data.transferEvents.items
+          const filteredEvents = transferEvents.filter(valid => {
+            let res = valid.hasOwnProperty('tokenContractAddress') && valid.tokenContractAddress.startsWith('0x')
+            
             if (this.historyFilter && typeof this.historyFilter === 'object') {
-              const createdAt = this.$moment.utc(valid.createdAt)
+              const createdAt = this.$moment.utc(valid.timestamp)
               res = res && createdAt.isAfter(this.historyFilter)
             }
-            
-            return res;
-          });
-          temp.map(tx => this.History.push({time: tx.createdAt.substring(0,10), name: tx.actionName, status: tx.txStatus}));
-          this.History.map(history => {
-            if(history.status === "SUCCEED"){
-              history.color="#00B580"
-            }
-            else if(history.status === 'FAILED'){
-              history.color="#F14E4E"
-            }
+
+            return res
+          })
+          filteredEvents.forEach(tx => {
+            const createdAt = this.$moment.unix(tx.timestamp).format("MM/DD/YYYY, h:mm:ss a");
+            const from = tx.from === this.walletAddress.user ? this.config.userName : 'pd'
+            const to = tx.to === this.walletAddress.pd ? 'pd' : this.config.userName
+
+            this.History.push({
+              time: createdAt,
+              value: tx.value,
+              from,
+              to,
+            })
           })
         })
         .catch(() => {
         })
     },
-    clearHistory() {
+    applyHistoryFilter() {
       const now = this.$moment.utc(new Date())
       localStorage.setItem('historyFilter', now);
-      this.$swal('Success', '내역 삭제가 완료되었습니다.', 'success')
+      this.$swal('Success', '필터 적용이 완료되었습니다.', 'success')
     },
+    removeHistoryFilter() {
+      localStorage.removeItem('historyFilter')
+      this.$swal('Success', '필터 해제가 완료되었습니다.', 'success')
+    },
+    convertReadableNum(val) {
+      return val.substring(0, val.length - 18)
+    }
   }
 }
 </script>

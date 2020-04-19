@@ -66,29 +66,15 @@
 
 <script>
 import Header from '@/components/header'
+import MixinConfig from '@/components/mixins/MixinConfig'
 
 export default {
+  mixins: [MixinConfig],
   components: {
     Header,
   },
-  mounted() {
-    if (localStorage.getItem('starcokeConfig')) {
-      try {
-        const token = localStorage.getItem('starcokeConfig')
-        this.config = this.$jwt.decode(token).config
-      } catch(e) {
-        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
-        localStorage.removeItem('starcokeConfig')
-        this.$router.push({
-          name: 'login'
-        })
-      }
-    }
-    this.load()
-  },
   data () {
     return {
-      config: undefined,
       content: [
         {
           id: '1',
@@ -187,9 +173,8 @@ export default {
   },
   methods: {
     load() {
-      this.axios.get(`https://api.luniverse.io/tx/v1.0/histories?next=0`,{
+      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`,{
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': `application/json`
         },
       })
@@ -197,12 +182,22 @@ export default {
           var l = parseInt(this.database.like.replace(/,/g,""));
           var p = parseInt(this.database.people.replace(/,/g,""));
           var m = parseInt(this.database.money.replace(/,/g,""));
-          var temp=response.data.data.histories.items.filter(valid => valid.txStatus==="SUCCEED" && [this.txActionName.funding, this.txActionName.like].indexOf(valid.actionName) !== -1);
-          temp.map(tx => {
-            if(tx.actionName === this.txActionName.like){
+          const transferEvents = response.data.data.transferEvents.items
+          const filteredEvents = transferEvents.filter(valid => {
+            let res = valid.hasOwnProperty('tokenContractAddress') && valid.tokenContractAddress.startsWith('0x')
+            
+            if (this.historyFilter && typeof this.historyFilter === 'object') {
+              const createdAt = this.$moment.utc(valid.timestamp)
+              res = res && createdAt.isAfter(this.historyFilter)
+            }
+
+            return res
+          })
+          filteredEvents.forEach(tx => {
+            if(tx.value === '100000000000000000000'){
               l = l + 1;
             }
-            else if(tx.actionName === this.txActionName.funding){
+            else if(tx.value === '1000000000000000000000'){
               p = p + 1;
               m = m + 10000;
             }
