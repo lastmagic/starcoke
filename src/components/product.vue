@@ -74,29 +74,15 @@
 <script>
 import Header from '@/components/header'
 import BigNumber from 'bignumber.js'
+import MixinConfig from '@/components/mixins/MixinConfig'
 
 export default {
+  mixins: [MixinConfig],
   components: {
     Header,
   },
-  mounted() {
-    if (localStorage.getItem('starcokeConfig')) {
-      try {
-        const token = localStorage.getItem('starcokeConfig')
-        this.config = this.$jwt.decode(token).config
-      } catch(e) {
-        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
-        localStorage.removeItem('starcokeConfig')
-        this.$router.push({
-          name: 'login'
-        })
-      }
-    }
-    this.load()
-  },
   data () {
     return {
-      config: {},
       products: [
         {
           buy: '구매하기',

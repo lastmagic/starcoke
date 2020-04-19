@@ -28,25 +28,24 @@ export default {
   components: {
     Header,
   },
+  mounted() {
+    if (localStorage.getItem('starcokeConfig')) {
+      try {
+        const token = localStorage.getItem('starcokeConfig')
+        this.config = this.$jwt.decode(token).config
+        this.$swal('이미 로그인 되어있습니다.', '홈으로 이동합니다.', 'info')
+        this.$router.push({
+          name: 'home'
+        })
+      } catch(e) {
+        localStorage.removeItem('starcokeConfig')
+      }
+    }
+  },
   data () {
     return {
       email: null,
       password: null,
-      config: {},
-    }
-  },
-  mounted() {
-    if (localStorage.getItem('starcokeConfig')) {
-      try {
-        const token = JSON.parse(localStorage.getItem('starcokeConfig'));
-        this.config = this.$jwt.decode(token).config
-      } catch(e) {
-        this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
-        localStorage.removeItem('starcokeConfig')
-        this.$router.push({
-          name: 'login'
-        })
-      }
     }
   },
   methods: {

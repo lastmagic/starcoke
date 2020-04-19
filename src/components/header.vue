@@ -9,9 +9,10 @@
         </div>
         <div class="navbar-nav align-items-lg-center ml-auto">
           <div class="nav-item">
-            <router-link class="btn btn-outline-white btn-round" :to="{ name: 'my' }">
+            <router-link v-if="isLogIned" class="btn btn-outline-white btn-round" :to="{ name: 'my' }">
               <i v-if="username !== 'My Page'" class="fa fa-user" />{{username}}
             </router-link>
+            <a v-if="$route.name !== 'login'" href="javascript:void(0);" @click="logout">Logout</a>
           </div>
         </div>
       </div>
@@ -20,26 +21,10 @@
 </template>
 
 <script>
-  export default{
-    data () {
-      return {
-        config: undefined,
-      }
-    },
-    mounted() {
-      if (localStorage.getItem('starcokeConfig')) {
-        try {
-          const token = localStorage.getItem('starcokeConfig')
-          this.config = this.$jwt.decode(token).config
-        } catch(e) {
-          this.$swal('로그인 에러가 발생했습니다.', '로그인 화면으로 이동합니다.', 'error')
-          localStorage.removeItem('starcokeConfig')
-          this.$router.push({
-            name: 'login'
-          })
-        }
-      }
-    },
+import MixinConfig from '@/components/mixins/MixinConfig'
+
+export default {
+    mixins: [MixinConfig],
     computed:{
       username() {
         return (this.config || {}).userName ? this.config.userName + ' 님' : 'My Page'
