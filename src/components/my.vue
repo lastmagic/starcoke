@@ -122,6 +122,7 @@ export default {
         },
       })
         .then((response) => {
+          this.History = []
           const transferEvents = response.data.data.transferEvents.items
           const filteredEvents = transferEvents.filter(valid => {
             let res = valid.hasOwnProperty('tokenContractAddress') && valid.tokenContractAddress.startsWith('0x')
