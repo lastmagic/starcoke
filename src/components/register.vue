@@ -48,8 +48,7 @@ export default {
           'name': this.name,
           'email': this.email,
           'password': this.password,
-        },
-        headers: {'DINO-REQUEST-HEAD': 'XMLHttpRequest'},
+        }
       }).then(response => {
         if (response && response.status === 200) {
           this.$router.push({

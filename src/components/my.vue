@@ -104,11 +104,7 @@ export default {
   methods: {
     load() {
       if (!this.isLoggedIn) return;
-      this.axios.get(`/api/getBalance/${this.walletAddress.user}`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-      })
+      this.axios.get(`/api/getBalance/${this.walletAddress.user}`)
         .then((response) => {
           this.balance = response.data.data.balance;
           this.balance = (BigNumber(this.balance)).div((BigNumber('10')).pow(18)).toFixed(5);
@@ -117,11 +113,7 @@ export default {
           this.balance = 0;
         });
       
-      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`,{
-        headers: {
-          'Content-Type': `application/json`
-        },
-      })
+      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`)
         .then((response) => {
           this.History = []
           const transferEvents = response.data.data.transferEvents.items

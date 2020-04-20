@@ -56,8 +56,7 @@ export default {
         data: {
           'email': this.email,
           'password': this.password,
-        },
-        // headers: {'DINO-REQUEST-HEAD': 'XMLHttpRequest'},
+        }
       }).then(response => {
         const token = response.data.data.jwtToken;
         localStorage.setItem('starcokeConfig', token);

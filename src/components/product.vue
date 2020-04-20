@@ -144,11 +144,6 @@ export default {
           'inputs': {
             '_index': productId
           }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-          }, 
         })
           .then((response) => {
             if (response.data.data.res[0] !== '') {
@@ -170,11 +165,7 @@ export default {
         this.$swal('Info', '이미 구매하셨습니다.', 'info')
         return
       }
-      this.axios.get(`/api/getBalance/${this.walletAddress.user}`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-      })
+      this.axios.get(`/api/getBalance/${this.walletAddress.user}`)
         .then((response) => {
           if((BigNumber(response.data.data.balance).div((BigNumber('10')).pow(18)) >= parseInt(this.products[productId].price))){
             this.purchase(productId);
@@ -194,12 +185,7 @@ export default {
             'receiverAddress': this.walletAddress.pd,
             'valueAmount': this.products[productId].price + '000000000000000000',
           }
-        },
-      {
-        headers: {
-          'api-key': this.apiKey,
-        },
-      })
+        })
         .then(() => {
           this.axios.post(`/api/txAction/${this.txActionName.setOwner}`,{
               'from': this.walletAddress.user,
@@ -207,11 +193,6 @@ export default {
                 '_index': productId,
                 '_name': this.userName
               }
-          }, 
-          {
-            headers: {
-              'Authorization': `Bearer ${this.apiKey}`,
-            },
           })
             .then(() => {
               this.$swal('Success', '구매에 성공하였습니다.', 'success')
@@ -222,11 +203,6 @@ export default {
                 'inputs': {
                   '_index': productId
                 }
-              },
-              {
-               headers: {
-                  'Authorization': `Bearer ${this.apiKey}`,
-                }, 
               })
                 .then((response) => {
                   if (response.data.data.res[0] !== '') {

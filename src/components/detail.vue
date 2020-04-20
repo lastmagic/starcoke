@@ -174,11 +174,7 @@ export default {
   methods: {
     load() {
       if (!this.isLoggedIn) return;
-      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`,{
-        headers: {
-          'Content-Type': `application/json`
-        },
-      })
+      this.axios.get(`https://api.luniverse.io/scan/v1.0/chains/5300575914426995782/accounts/${this.walletAddress.user}/transfer-events?limit=25`)
         .then((response) => {
           var l = parseInt(this.database.like.replace(/,/g,""));
           var p = parseInt(this.database.people.replace(/,/g,""));
@@ -225,13 +221,7 @@ export default {
             'receiverAddress': this.walletAddress.user,
             'valueAmount': '100000000000000000000'
           }
-      },
-      {
-        headers: {
-          'api-key': this.apiKey,
-        }
-      }
-      )
+      })
         .then(() => {
           this.$swal('Success', '좋아요를 눌러주셔서 감사합니다!\n100RWT를 드려요!', 'success')
           n = n + 1;
@@ -255,11 +245,6 @@ export default {
               'receiverAddress': this.walletAddress.user,
               'valueAmount': '1000000000000000000000'
             }
-        }, 
-        {
-          headers: {
-            'api-key': this.apiKey,
-          },
         })
         .then(() => {
           this.$swal('Success', '10,000원이 펀딩되었습니다.\n1,000RWT를 드려요!', 'success')
