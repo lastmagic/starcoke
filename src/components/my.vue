@@ -104,7 +104,7 @@ export default {
   methods: {
     load() {
       if (!this.isLoggedIn) return;
-      this.axios.get(`https://api.luniverse.io/tx/v1.0/wallets/${this.walletAddress.user}/${this.mtSymbol}/${this.stSymbol}/balance`, {
+      this.axios.get(`/api/getBalance/${this.walletAddress.user}`, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
         },

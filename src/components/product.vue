@@ -139,7 +139,7 @@ export default {
     load() {
       if (!this.isLoggedIn) return;
       for(let productId = 0; productId < 4; productId++){
-        this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.getOwner}`,{
+        this.axios.post(`/api/txAction/${this.txActionName.getOwner}`,{
           'from': this.walletAddress.user,
           'inputs': {
             '_index': productId
@@ -170,7 +170,7 @@ export default {
         this.$swal('Info', '이미 구매하셨습니다.', 'info')
         return
       }
-      this.axios.get(`https://api.luniverse.io/tx/v1.0/wallets/${this.walletAddress.user}/${this.mtSymbol}/${this.stSymbol}/balance`, {
+      this.axios.get(`/api/getBalance/${this.walletAddress.user}`, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
         },
@@ -188,7 +188,7 @@ export default {
         })
     },
     purchase(productId){
-      this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.purchase}`,{
+      this.axios.post(`/api/txAction/${this.txActionName.purchase}`,{
           'from': this.walletAddress.user,
           'inputs' : {
             'receiverAddress': this.walletAddress.pd,
@@ -201,7 +201,7 @@ export default {
         },
       })
         .then(() => {
-          this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.setOwner}`,{
+          this.axios.post(`/api/txAction/${this.txActionName.setOwner}`,{
               'from': this.walletAddress.user,
               'inputs': {
                 '_index': productId,
@@ -217,7 +217,7 @@ export default {
               this.$swal('Success', '구매에 성공하였습니다.', 'success')
               this.products[productId].buy='구매 완료';
               this.products[productId].disabled='true';
-              this.axios.post(`https://api.luniverse.io/tx/v1.0/transactions/${this.txActionName.getOwner}`,{
+              this.axios.post(`/api/txAction/${this.txActionName.getOwner}`,{
                 'from': this.walletAddress.user,
                 'inputs': {
                   '_index': productId
