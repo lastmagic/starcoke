@@ -104,7 +104,7 @@ export default {
   methods: {
     load() {
       if (!this.isLoggedIn) return;
-      this.axios.get(`/api/getBalance/${this.walletAddress.user}`)
+      this.axios.get(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/get-balance/${this.walletAddress.user}`)
         .then((response) => {
           this.balance = response.data.data.balance;
           this.balance = (BigNumber(this.balance)).div((BigNumber('10')).pow(18)).toFixed(5);

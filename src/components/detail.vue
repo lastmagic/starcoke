@@ -215,7 +215,7 @@ export default {
         return;
       }
       let n = parseInt(this.database.like.replace(/,/g,""));
-      this.axios.post(`/api/txAction/${this.txActionName.like}`,{ 
+      this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.like}`,{ 
           'from': this.walletAddress.pd,
           'inputs' : {
             'receiverAddress': this.walletAddress.user,
@@ -239,7 +239,7 @@ export default {
       }
       let m = parseInt(this.database.money.replace(/,/g,""));
       let p = parseInt(this.database.people.replace(/,/g,""));
-      this.axios.post(`/api/txAction/${this.txActionName.funding}`,{
+      this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.funding}`,{
             'from': this.walletAddress.pd,
             'inputs' : {
               'receiverAddress': this.walletAddress.user,

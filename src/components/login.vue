@@ -52,7 +52,7 @@ export default {
     login() {
       this.axios({
         method: 'post',
-        url: '/api/login',
+        url: 'https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/login-token',
         data: {
           'email': this.email,
           'password': this.password,

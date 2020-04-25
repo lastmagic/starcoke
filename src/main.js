@@ -14,7 +14,7 @@ import './assets/vendor/css/bootstrap.css'
 Vue.use(VueAxios, axios)
 Vue.use(BigNumber)
 Vue.use(VueJWT, {
-  signKey: 'tmpEncryptKey'
+  signKey: 'testEncryptKey'
 })
 const options = {
   confirmButtonColor: '#26a69a',

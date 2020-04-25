@@ -139,7 +139,7 @@ export default {
     load() {
       if (!this.isLoggedIn) return;
       for(let productId = 0; productId < 4; productId++){
-        this.axios.post(`/api/txAction/${this.txActionName.getOwner}`,{
+        this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.getOwner}`,{
           'from': this.walletAddress.user,
           'inputs': {
             '_index': productId
@@ -165,7 +165,7 @@ export default {
         this.$swal('Info', '이미 구매하셨습니다.', 'info')
         return
       }
-      this.axios.get(`/api/getBalance/${this.walletAddress.user}`)
+      this.axios.get(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/get-balance/${this.walletAddress.user}`)
         .then((response) => {
           if((BigNumber(response.data.data.balance).div((BigNumber('10')).pow(18)) >= parseInt(this.products[productId].price))){
             this.purchase(productId);
@@ -179,7 +179,7 @@ export default {
         })
     },
     purchase(productId){
-      this.axios.post(`/api/txAction/${this.txActionName.purchase}`,{
+      this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.purchase}`,{
           'from': this.walletAddress.user,
           'inputs' : {
             'receiverAddress': this.walletAddress.pd,
@@ -187,7 +187,7 @@ export default {
           }
         })
         .then(() => {
-          this.axios.post(`/api/txAction/${this.txActionName.setOwner}`,{
+          this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.setOwner}`,{
               'from': this.walletAddress.user,
               'inputs': {
                 '_index': productId,
@@ -198,7 +198,7 @@ export default {
               this.$swal('Success', '구매에 성공하였습니다.', 'success')
               this.products[productId].buy='구매 완료';
               this.products[productId].disabled='true';
-              this.axios.post(`/api/txAction/${this.txActionName.getOwner}`,{
+              this.axios.post(`https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/transaction/${this.txActionName.getOwner}`,{
                 'from': this.walletAddress.user,
                 'inputs': {
                   '_index': productId

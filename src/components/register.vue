@@ -43,7 +43,7 @@ export default {
     register() {
       this.axios({
         method: 'post',
-        url: '/api/register',
+        url: 'https://9lrf0709m0.execute-api.ap-northeast-2.amazonaws.com/0425/luniverse-project/users',
         data: {
           'name': this.name,
           'email': this.email,
